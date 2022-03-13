@@ -276,10 +276,19 @@ def quiz_game():
                 pygame.quit()
 
         background(underwater)
+        question_text = pygame.font.Font('freesansbold.ttf', 20)
+        TextSurf, TextRect = text_objects("How much plastic waste is in the oceans?", question_text)
+        TextRect.center = ((display_width / 2), (display_height / 5))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        make_button(150, 250, 200, 50, seaweed_green, neon_green, "5.25 trillion tonnes")
+        make_button(450, 250, 200, 50, seaweed_green, neon_green, "900 billion tonnes")
+        make_button(150, 400, 200, 50, seaweed_green, neon_green, "There isn't any")
+        make_button(450, 400, 200, 50, seaweed_green, neon_green, "500 million tonnes")
+
 
         pygame.display.update()
         clock.tick(60)
-
 
 
 def end_screen():
