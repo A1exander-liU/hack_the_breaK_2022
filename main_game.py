@@ -26,17 +26,29 @@ pygame.display.set_caption('Ocean Helper')
 clock = pygame.time.Clock()
 
 # loading images for use later
-carImg = pygame.image.load('./images/racecar.png')
-cityImg = pygame.image.load('./images/city2.jpg')
 sea_floor = pygame.image.load('./images/seafloor.jpg')
-sea_turtle = pygame.image.load('./images/sea_turtle.jpg')
+sea_turtle = pygame.image.load('./images/sea_turtle_2-removebg-preview.png')
+underwater = pygame.image.load('./images/underwater.jpg')
+garbage = pygame.image.load('./images/garbage-removebg-preview.png')
 
-def background():
-    scaled_img = pygame.transform.scale(sea_floor, (display_width, display_height))
+def background(img):
+    scaled_img = pygame.transform.scale(img, (display_width, display_height))
     gameDisplay.blit(scaled_img, (0, 0))
 
 def draw_image(x_location, y_location, img):
+    # use this for static images
     gameDisplay.blit(img, (x_location, y_location))
+
+
+def turtle(x_location, y_location):
+    # for character controlled image
+    sea_turtle_scaled = pygame.transform.scale(sea_turtle, (100, 100))
+    gameDisplay.blit(sea_turtle_scaled, (x_location, y_location))
+
+
+def garbage_img(x_location, y_location):
+    garbage_scaled = pygame.transform.scale(garbage, (100, 100))
+    gameDisplay.blit(garbage_scaled, (x_location, y_location))
 
 
 def text_objects(text, font):
@@ -51,7 +63,7 @@ def game_over_message(text):
     gameDisplay.blit(TextSurf, TextRect)
     pygame.display.update()
     time.sleep(2)
-    game_loop()
+    home_screen()
 
 
 def things(thingx, thingy, thingw, thingh, color):
@@ -125,7 +137,7 @@ def home_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-        background()
+        background(sea_floor)
 
         draw_image(300, 100, sea_turtle)
 
@@ -148,14 +160,16 @@ def game_loop():
     gameExit = False
 
     # parameters of the obstacles
-    thing_start_x = random.randrange(0, display_width)
-    thing_start_y = -600
-    thing_speed = 6
-    thing_width = 100
-    thing_height = 100
+    starting_x = random.randrange(0, display_width)
+    starting_y = -600
+    speed = 6
+    width = 100
+    height = 100
 
     #intializing score
     avoided = 0
+
+    turtle_width = 70
 
     while not gameExit:
 
@@ -181,33 +195,37 @@ def game_loop():
         # increasing and decreasing thing's y and x to mimic movement
         x += x_change
         y += y_change
-        background()
+        background(underwater)
         # draw the obstacle with the inputted parameters
-        things(thing_start_x, thing_start_y, thing_width, thing_height, black)
+        # things(thing_start_x, thing_start_y, thing_width, thing_height, black)
+        garbage_img(starting_x, starting_y)
+        # scaled_img = pygame.transform.scale(garbage, (100, 100))
+        # draw_image(50, 50, scaled_img)
+        turtle(x, y)
         # obstacle moves down 6 pixels every frame
-        thing_start_y += thing_speed
-        draw_image(x, y, carImg)
+        starting_y += speed
+        # draw_image(x, y, carImg)
         display_score(avoided)
 
-        if thing_start_y > display_height:
-            thing_start_y = 0 - thing_height
-            thing_start_x = random.randrange(0, display_width)
+        if starting_y > display_height:
+            starting_y = 0 - height
+            starting_x = random.randrange(0, display_width)
         # checks if the obstacle passed over character
-        if y < thing_start_y + thing_height:
+        if y < starting_y + height:
             # checks if the the x point of the obstacle crosses the character
-            if x > thing_start_x and x < thing_start_x + thing_width or x + car_width > thing_start_x and x + car_width < thing_start_x + thing_width:
+            if x > starting_x and x < starting_x + width or x + turtle_width > starting_x and x + turtle_width < starting_x + width:
                 game_over()
 
-        if thing_start_y > display_height:
-            thing_start_y = 0 - thing_height
-            thing_start_x = random.randrange(0, display_width)
+        if starting_y > display_height:
+            starting_y = 0 - height
+            starting_x = random.randrange(0, display_width)
             avoided += 1
-            thing_speed += 1
-            thing_width += (avoided * 1.2)
+            speed += 1
+            width += (avoided * 1.2)
 
         # keeps character inside of the screen
-        if x > display_width - car_width:
-            x = display_width - car_width
+        if x > display_width - turtle_width:
+            x = display_width - turtle_width
             # game_over()
         if x < 0:
             x = 0
@@ -215,8 +233,8 @@ def game_loop():
         if y < 0:
             y = 0
             # game_over()
-        if y > display_height - car_width:
-            y = display_height - car_width
+        if y > display_height - turtle_width:
+            y = display_height - turtle_width
             # game_over()
         # updates the screen after each event
         pygame.display.update()
