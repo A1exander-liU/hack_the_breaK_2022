@@ -90,7 +90,7 @@ def make_button(x_location, y_location, button_width, button_height, not_hover_c
     mouse = pygame.mouse.get_pos()
     mouse_clicked = pygame.mouse.get_pressed()
 
-    # checking if they clicked the right button, then run the other loop
+    # checking if they clicked the right button, then run the loop
     if x_location + button_width > mouse[0] > x_location and y_location + button_height > mouse[1] > y_location:
         pygame.draw.rect(gameDisplay, hovered_colour, (x_location, y_location, button_width, button_height), 0, 10)
         if mouse_clicked[0] == 1 and to_home != None and button_info == "Start":
@@ -108,6 +108,13 @@ def make_button(x_location, y_location, button_width, button_height, not_hover_c
             game_loop()
         if mouse_clicked[0] == 1 and quiz_game != None and button_info == "Ocean Quiz":
             quiz_game()
+        if mouse_clicked[0] == 1 and quiz_one_answer() != None and (button_info == "5.25 trillion tonnes" or button_info == "900 billion tonnes" or button_info == "There isn't any" or button_info == "500 million tonnes"):
+            quiz_one_answer()
+        if mouse_clicked[0] == 1 and quiz_game() != None and button_info == "Question Two":
+            question_2()
+        if mouse_clicked[0] == 1 and quiz_two_answer() != None and (button_info == "Microplastics? What's that" or button_info == "24 trillion" or button_info == "10 trillion" or button_info == "1 trillion"):
+            quiz_two_answer()
+
     else:
         pygame.draw.rect(gameDisplay, not_hover_colour, (x_location, y_location, button_width, button_height),0 ,10)
     # draw text on the button
@@ -286,6 +293,80 @@ def quiz_game():
         make_button(150, 400, 200, 50, seaweed_green, neon_green, "There isn't any")
         make_button(450, 400, 200, 50, seaweed_green, neon_green, "500 million tonnes")
 
+        pygame.display.update()
+
+        clock.tick(60)
+
+
+def quiz_one_answer():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        background(underwater)
+
+        answer_text = pygame.font.Font('freesansbold.ttf', 20)
+        TextSurf, TextRect = text_objects("There is around 8 trillion tonnes in the ocean. Around 8 million tonnes", answer_text)
+        TextRect.center = ((display_width / 2), (display_height / 5))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        text = font.render("are discarded daily, that's almost 3 billion tonnes each year!", True, black)
+        text_rect_2 = text.get_rect()
+        text_rect_2.center = (display_width / 2, 150)
+        gameDisplay.blit(text, text_rect_2)
+
+        make_button(320, 300, 150, 50, seaweed_green, neon_green, "Question Two")
+
+        pygame.display.update()
+
+        clock.tick(60)
+
+
+def question_2():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        background(underwater)
+
+        question_text = pygame.font.Font('freesansbold.ttf', 20)
+        TextSurf, TextRect = text_objects("How many pieces of microplastics are in the ocean?", question_text)
+        TextRect.center = ((display_width / 2), (display_height / 5))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        make_button(150, 250, 200, 50, seaweed_green, neon_green, "Microplastics? What's that?")
+        make_button(450, 250, 200, 50, seaweed_green, neon_green, "24 trillion")
+        make_button(150, 400, 200, 50, seaweed_green, neon_green, "10 trillion")
+        make_button(450, 400, 200, 50, seaweed_green, neon_green, "1 trillion")
+
+        pygame.display.update()
+
+        clock.tick(60)
+
+
+def quiz_two_answer():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        background(underwater)
+
+        answer_text = pygame.font.Font('freesansbold.ttf', 20)
+        TextSurf, TextRect = text_objects("There is around 24 trillion pieces in the ocean. They can also end up in our food.", answer_text)
+        TextRect.center = ((display_width / 2), (display_height / 5))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        text = font.render("These microplastics increase potential toxic effects, potentially causing cancer", True, black)
+        text_rect_2 = text.get_rect()
+        text_rect_2.center = (display_width / 2, 150)
+        gameDisplay.blit(text, text_rect_2)
+
+        make_button(display_width / 2, display_height / 2, 100, 50, seaweed_green, neon_green, "Question Three")
 
         pygame.display.update()
         clock.tick(60)
@@ -308,7 +389,6 @@ def end_screen():
         pygame.display.update()
         # frames game is running at
         clock.tick(60)
-
 
 
 game_intro()
