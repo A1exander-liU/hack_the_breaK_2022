@@ -27,6 +27,8 @@ sea_floor = pygame.image.load('./images/sea_floor_no_watermark.jpg')
 sea_turtle = pygame.image.load('./images/sea_turtle_2-removebg-preview.png')
 underwater = pygame.image.load('./images/underwater.jpg')
 garbage = pygame.image.load('./images/garbage-removebg-preview.png')
+net = pygame.image.load('./images/net-removebg-preview.png')
+
 
 def background(img):
     # scale image to screen size and draw it on screen
@@ -41,8 +43,8 @@ def draw_image(x_location, y_location, img):
 
 def turtle(x_location, y_location):
     # for character controlled image
-    sea_turtle_scaled = pygame.transform.scale(sea_turtle, (100, 100))
-    gameDisplay.blit(sea_turtle_scaled, (x_location, y_location))
+    net_scaled = pygame.transform.scale(net, (100, 100))
+    gameDisplay.blit(net_scaled, (x_location, y_location))
 
 
 def garbage_img(x_location, y_location):
