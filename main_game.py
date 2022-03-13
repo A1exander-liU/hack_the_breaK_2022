@@ -61,7 +61,7 @@ def game_over_message(text):
     TextSurf, TextRect = text_objects(text, large_text)
     TextRect.center = ((display_width / 2), (display_height / 2))
     gameDisplay.blit(TextSurf, TextRect)
-    make_button(350, 400, 100, 50, seaweed_green, neon_green, "Return")
+    make_button(350, 400, 100, 50, seaweed_green, neon_green, "Return", home_screen)
     pygame.display.update()
 
 
@@ -86,34 +86,36 @@ def to_home():
     home_screen()
 
 
-def make_button(x_location, y_location, button_width, button_height, not_hover_colour, hovered_colour, button_info):
+def make_button(x_location, y_location, button_width, button_height, not_hover_colour, hovered_colour, button_info, action = None):
     mouse = pygame.mouse.get_pos()
     mouse_clicked = pygame.mouse.get_pressed()
 
     # checking if they clicked the right button, then run the loop
     if x_location + button_width > mouse[0] > x_location and y_location + button_height > mouse[1] > y_location:
         pygame.draw.rect(gameDisplay, hovered_colour, (x_location, y_location, button_width, button_height), 0, 10)
-        if mouse_clicked[0] == 1 and to_home != None and button_info == "Start":
-            to_home()
-        if mouse_clicked[0] == 1 and to_home != None and button_info == "Exit":
-            pygame.quit()
-        if mouse_clicked[0] == 1 and game_intro != None and button_info == "Back":
-            game_intro()
-        if mouse_clicked[0] == 1 and game_loop != None and button_info == "Garbage Collector":
-            game_loop()
-        if mouse_clicked[0] == 1 and to_home != None and button_info == "Return":
-            home_screen()
-        if mouse_clicked[0] == 1 and game_loop != None and button_info == "Again":
-            time.sleep(0.5)
-            game_loop()
-        if mouse_clicked[0] == 1 and quiz_game != None and button_info == "Ocean Quiz":
-            quiz_game()
-        if mouse_clicked[0] == 1 and quiz_one_answer() != None and (button_info == "5.25 trillion tonnes" or button_info == "900 billion tonnes" or button_info == "There isn't any" or button_info == "500 million tonnes"):
-            quiz_one_answer()
-        if mouse_clicked[0] == 1 and quiz_game() != None and button_info == "Question Two":
-            question_2()
-        if mouse_clicked[0] == 1 and quiz_two_answer() != None and (button_info == "Microplastics? What's that" or button_info == "24 trillion" or button_info == "10 trillion" or button_info == "1 trillion"):
-            quiz_two_answer()
+        if mouse_clicked[0] == 1 and action != None:
+            action()
+        # if mouse_clicked[0] == 1 and to_home != None and button_info == "Start":
+        #     to_home()
+        # if mouse_clicked[0] == 1 and to_home != None and button_info == "Exit":
+        #     pygame.quit()
+        # if mouse_clicked[0] == 1 and game_intro != None and button_info == "Back":
+        #     game_intro()
+        # if mouse_clicked[0] == 1 and game_loop != None and button_info == "Garbage Collector":
+        #     game_loop()
+        # if mouse_clicked[0] == 1 and to_home != None and button_info == "Return":
+        #     home_screen()
+        # if mouse_clicked[0] == 1 and game_loop != None and button_info == "Again":
+        #     time.sleep(0.5)
+        #     game_loop()
+        # if mouse_clicked[0] == 1 and quiz_game != None and button_info == "Ocean Quiz":
+        #     quiz_game()
+        # if mouse_clicked[0] == 1 and quiz_one_answer() != None and (button_info == "5.25 trillion tonnes" or button_info == "900 billion tonnes" or button_info == "There isn't any" or button_info == "500 million tonnes"):
+        #     quiz_one_answer()
+        # if mouse_clicked[0] == 1 and quiz_game() != None and button_info == "Question Two":
+        #     question_2()
+        # if mouse_clicked[0] == 1 and quiz_two_answer() != None and (button_info == "Microplastics? What's that" or button_info == "24 trillion" or button_info == "10 trillion" or button_info == "1 trillion"):
+        #     quiz_two_answer()
 
     else:
         pygame.draw.rect(gameDisplay, not_hover_colour, (x_location, y_location, button_width, button_height),0 ,10)
@@ -147,8 +149,8 @@ def game_intro():
         gameDisplay.blit(TextSurf, TextRect)
 
         # make button
-        make_button(150, 350, 100, 50, seaweed_green, neon_green, "Start")
-        make_button(550, 350, 100, 50, darker_red, neon_red, "Exit")
+        make_button(150, 350, 100, 50, seaweed_green, neon_green, "Start", home_screen)
+        make_button(550, 350, 100, 50, darker_red, neon_red, "Exit", pygame.quit)
 
         pygame.display.update()
         clock.tick(15)
@@ -164,9 +166,9 @@ def home_screen():
 
         draw_image(300, 0, sea_turtle)
 
-        make_button(100, 450, 150, 50, seaweed_green, neon_green, "Garbage Collector")
-        make_button(550, 450, 150, 50, seaweed_green, neon_green, "Ocean Quiz")
-        make_button(350, 450, 100, 50, seaweed_green, neon_green, "Back")
+        make_button(100, 450, 150, 50, seaweed_green, neon_green, "Garbage Collector", game_loop)
+        make_button(550, 450, 150, 50, seaweed_green, neon_green, "Ocean Quiz", quiz_game)
+        make_button(350, 450, 100, 50, seaweed_green, neon_green, "Back", game_intro)
 
         # updates the screen after each event
         pygame.display.update()
@@ -288,10 +290,10 @@ def quiz_game():
         TextRect.center = ((display_width / 2), (display_height / 5))
         gameDisplay.blit(TextSurf, TextRect)
 
-        make_button(150, 250, 200, 50, seaweed_green, neon_green, "5.25 trillion tonnes")
-        make_button(450, 250, 200, 50, seaweed_green, neon_green, "900 billion tonnes")
-        make_button(150, 400, 200, 50, seaweed_green, neon_green, "There isn't any")
-        make_button(450, 400, 200, 50, seaweed_green, neon_green, "500 million tonnes")
+        make_button(150, 250, 200, 50, seaweed_green, neon_green, "5.25 trillion tonnes", quiz_one_answer)
+        make_button(450, 250, 200, 50, seaweed_green, neon_green, "900 billion tonnes", quiz_one_answer)
+        make_button(150, 400, 200, 50, seaweed_green, neon_green, "There isn't any", quiz_one_answer)
+        make_button(450, 400, 200, 50, seaweed_green, neon_green, "500 million tonnes", quiz_one_answer)
 
         pygame.display.update()
 
@@ -317,7 +319,7 @@ def quiz_one_answer():
         text_rect_2.center = (display_width / 2, 150)
         gameDisplay.blit(text, text_rect_2)
 
-        make_button(320, 300, 150, 50, seaweed_green, neon_green, "Question Two")
+        make_button(320, 300, 150, 50, seaweed_green, neon_green, "Question Two", question_2)
 
         pygame.display.update()
 
@@ -337,10 +339,10 @@ def question_2():
         TextRect.center = ((display_width / 2), (display_height / 5))
         gameDisplay.blit(TextSurf, TextRect)
 
-        make_button(150, 250, 200, 50, seaweed_green, neon_green, "Microplastics? What's that?")
-        make_button(450, 250, 200, 50, seaweed_green, neon_green, "24 trillion")
-        make_button(150, 400, 200, 50, seaweed_green, neon_green, "10 trillion")
-        make_button(450, 400, 200, 50, seaweed_green, neon_green, "1 trillion")
+        make_button(150, 250, 200, 50, seaweed_green, neon_green, "Microplastics? What's that?", quiz_two_answer)
+        make_button(450, 250, 200, 50, seaweed_green, neon_green, "24 trillion", quiz_two_answer)
+        make_button(150, 400, 200, 50, seaweed_green, neon_green, "10 trillion", quiz_two_answer)
+        make_button(450, 400, 200, 50, seaweed_green, neon_green, "1 trillion", quiz_two_answer)
 
         pygame.display.update()
 
@@ -366,7 +368,7 @@ def quiz_two_answer():
         text_rect_2.center = (display_width / 2, 150)
         gameDisplay.blit(text, text_rect_2)
 
-        make_button(display_width / 2, display_height / 2, 100, 50, seaweed_green, neon_green, "Question Three")
+        make_button(330, 300, 200, 50, seaweed_green, neon_green, "Return", home_screen)
 
         pygame.display.update()
         clock.tick(60)
@@ -382,8 +384,8 @@ def end_screen():
         # draw background
         background(sea_floor)
 
-        make_button(200, 300, 100, 50, seaweed_green, neon_green, "Return")
-        make_button(500, 300, 100, 50, seaweed_green, neon_green, "Again")
+        make_button(200, 300, 100, 50, seaweed_green, neon_green, "Return", home_screen)
+        make_button(500, 300, 100, 50, seaweed_green, neon_green, "Again", game_loop)
 
         # update screen
         pygame.display.update()
