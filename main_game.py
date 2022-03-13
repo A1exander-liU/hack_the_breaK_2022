@@ -167,7 +167,7 @@ def home_screen():
         draw_image(300, 0, sea_turtle)
 
         make_button(100, 450, 150, 50, seaweed_green, neon_green, "Garbage Collector", game_loop)
-        make_button(550, 450, 150, 50, seaweed_green, neon_green, "Ocean Quiz", quiz_game)
+        make_button(550, 450, 150, 50, seaweed_green, neon_green, "Ocean Trivia", quiz_game)
         make_button(350, 450, 100, 50, seaweed_green, neon_green, "Back", game_intro)
 
         # updates the screen after each event
@@ -368,11 +368,58 @@ def quiz_two_answer():
         text_rect_2.center = (display_width / 2, 150)
         gameDisplay.blit(text, text_rect_2)
 
-        make_button(330, 300, 200, 50, seaweed_green, neon_green, "Return", home_screen)
+        make_button(330, 300, 200, 50, seaweed_green, neon_green, "Question Three", question_three)
 
         pygame.display.update()
         clock.tick(60)
 
+
+def question_three():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        background(underwater)
+
+        question_text = pygame.font.Font('freesansbold.ttf', 20)
+        TextSurf, TextRect = text_objects("Do you know how many marine animals die each year?", question_text)
+        TextRect.center = ((display_width / 2), (display_height / 5))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        make_button(150, 250, 200, 50, seaweed_green, neon_green, "5 million", quiz_three_answer)
+        make_button(450, 250, 200, 50, seaweed_green, neon_green, "10 million", quiz_three_answer)
+        make_button(150, 400, 200, 50, seaweed_green, neon_green, "100, 000", quiz_three_answer)
+        make_button(450, 400, 200, 50, seaweed_green, neon_green, "100 million", quiz_three_answer)
+
+        pygame.display.update()
+
+        clock.tick(60)
+
+
+def quiz_three_answer():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        background(underwater)
+
+        answer_text = pygame.font.Font('freesansbold.ttf', 20)
+        TextSurf, TextRect = text_objects("About 100 million marine animals die each year from plastic waste alone.", answer_text)
+        TextRect.center = ((display_width / 2), (display_height / 5))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        text = font.render("Not only are we affected by ocean pollution, marine animals are too.", True, black)
+        text_rect_2 = text.get_rect()
+        text_rect_2.center = (display_width / 2, 150)
+        gameDisplay.blit(text, text_rect_2)
+
+        make_button(330, 300, 200, 50, seaweed_green, neon_green, "Return", home_screen)
+
+        pygame.display.update()
+        clock.tick(60)
 
 def end_screen():
     running = True
