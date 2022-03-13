@@ -28,12 +28,15 @@ clock = pygame.time.Clock()
 # loading images for use later
 carImg = pygame.image.load('./images/racecar.png')
 cityImg = pygame.image.load('./images/city2.jpg')
+sea_floor = pygame.image.load('./images/seafloor.jpg')
+sea_turtle = pygame.image.load('./images/sea_turtle.jpg')
+
 def background():
-    scaled_img = pygame.transform.scale(cityImg, (display_width, display_height))
+    scaled_img = pygame.transform.scale(sea_floor, (display_width, display_height))
     gameDisplay.blit(scaled_img, (0, 0))
 
-def car(x, y):
-    gameDisplay.blit(carImg, (x, y))
+def draw_image(x_location, y_location, img):
+    gameDisplay.blit(img, (x_location, y_location))
 
 
 def text_objects(text, font):
@@ -66,6 +69,33 @@ def display_score(score):
     pygame.display.update()
 
 
+def to_home():
+    time.sleep(0.5)
+    home_screen()
+
+
+def make_button(x_location, y_location, button_width, button_height, not_hover_colour, hovered_colour, button_info):
+    mouse = pygame.mouse.get_pos()
+    mouse_clicked = pygame.mouse.get_pressed()
+
+    if x_location + button_width > mouse[0] > x_location and y_location + button_height > mouse[1] > y_location:
+        pygame.draw.rect(gameDisplay, hovered_colour, (x_location, y_location, button_width, button_height), 0, 10)
+        if mouse_clicked[0] == 1 and to_home != None and button_info == "Start":
+            to_home()
+        if mouse_clicked[0] == 1 and to_home != None and button_info == "Exit":
+            pygame.quit()
+        if mouse_clicked[0] == 1 and game_intro != None and button_info == "Back":
+            game_intro()
+        if mouse_clicked[0] == 1 and game_loop != None and button_info == "Garbage Collector":
+            game_loop()
+    else:
+        pygame.draw.rect(gameDisplay, not_hover_colour, (x_location, y_location, button_width, button_height),0 ,10)
+    button_text = pygame.font.Font("freesansbold.ttf", 15)
+    textSurf, textRect = text_objects(button_info, button_text)
+    textRect.center = ((x_location + (button_width / 2)), (y_location + (button_height / 2)))
+    gameDisplay.blit(textSurf, textRect)
+
+
 def game_intro():
     intro = True
     # intiating the game intro loop
@@ -81,23 +111,32 @@ def game_intro():
         TextRect.center = ((display_width / 2), (display_height / 5))
         gameDisplay.blit(TextSurf, TextRect)
 
-        #adding some rectangles for buttons later
-        pygame.draw.rect(gameDisplay, seaweed_green, (150, 350, 100, 50), 0, 10)
-        pygame.draw.rect(gameDisplay, darker_red, (550, 350, 100, 50), 0, 10)
-
-        # get coordinate of user's current cursor location, returned as a tuple (x, y)
-        mouse = pygame.mouse.get_pos()
-
-        # if cursor is inside the button, redraw a button over the button with bright colour
-        if 150 + 100 > mouse[0] > 150 and 350 + 50 > mouse[1] > 350:
-            pygame.draw.rect(gameDisplay, neon_green, (150, 350, 100, 50), 0, 10)
-        if 550 + 100 > mouse[0] > 550 and 350 + 50 > mouse[1] > 350:
-            pygame.draw.rect(gameDisplay, neon_red, (550, 350, 100, 50), 0, 10)
-
+        # make button
+        make_button(150, 350, 100, 50, seaweed_green, neon_green, "Start")
+        make_button(550, 350, 100, 50, darker_red, neon_red, "Exit")
 
         pygame.display.update()
         clock.tick(15)
 
+
+def home_screen():
+    at_home = True
+    while at_home:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        background()
+
+        draw_image(300, 100, sea_turtle)
+
+        make_button(100, 450, 150, 50, seaweed_green, neon_green, "Garbage Collector")
+        make_button(550, 450, 150, 50, seaweed_green, neon_green, "Ocean Quiz")
+        make_button(350, 450, 100, 50, seaweed_green, neon_green, "Back")
+
+        # updates the screen after each event
+        pygame.display.update()
+        # frames the game is running at
+        clock.tick(60)
 
 def game_loop():
     x = (display_width * 0.45)
@@ -147,7 +186,7 @@ def game_loop():
         things(thing_start_x, thing_start_y, thing_width, thing_height, black)
         # obstacle moves down 6 pixels every frame
         thing_start_y += thing_speed
-        car(x, y)
+        draw_image(x, y, carImg)
         display_score(avoided)
 
         if thing_start_y > display_height:
@@ -185,6 +224,7 @@ def game_loop():
         clock.tick(60)
 
 game_intro()
+home_screen()
 game_loop()
 pygame.quit()
 quit()
