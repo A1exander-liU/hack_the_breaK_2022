@@ -1,11 +1,10 @@
 import random
-
 import pygame
 import time
 
-
 pygame.init()
 
+# setting screen size
 display_width = 800
 display_height = 600
 
@@ -17,26 +16,26 @@ seaweed_green = (55, 184, 111)
 neon_green = (33, 255, 70)
 neon_red = (255 ,38, 38)
 
-car_width = 73
-
-# create game screen size
+# create game screen
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 # set name of the game, displayed in top left corner of the 'navbar'
 pygame.display.set_caption('Ocean Helper')
 clock = pygame.time.Clock()
 
 # loading images for use later
-sea_floor = pygame.image.load('./images/seafloor.jpg')
+sea_floor = pygame.image.load('./images/sea_floor_no_watermark.jpg')
 sea_turtle = pygame.image.load('./images/sea_turtle_2-removebg-preview.png')
 underwater = pygame.image.load('./images/underwater.jpg')
 garbage = pygame.image.load('./images/garbage-removebg-preview.png')
 
 def background(img):
+    # scale image to screen size and draw it on screen
     scaled_img = pygame.transform.scale(img, (display_width, display_height))
     gameDisplay.blit(scaled_img, (0, 0))
 
+
 def draw_image(x_location, y_location, img):
-    # use this for static images
+    # used for static images
     gameDisplay.blit(img, (x_location, y_location))
 
 
@@ -47,6 +46,7 @@ def turtle(x_location, y_location):
 
 
 def garbage_img(x_location, y_location):
+    # automatically moving item to collect
     garbage_scaled = pygame.transform.scale(garbage, (100, 100))
     gameDisplay.blit(garbage_scaled, (x_location, y_location))
 
@@ -75,8 +75,8 @@ def game_over():
 
 
 def display_score(score):
-    font = pygame.font.Font('freesansbold.ttf', 25)
-    text = font.render("Avoided: " + str(score), True, black)
+    font = pygame.font.Font('freesansbold.ttf', 20)
+    text = font.render("Collected: " + str(score), True, black)
     gameDisplay.blit(text, (0, 0))
     pygame.display.update()
 
@@ -90,6 +90,7 @@ def make_button(x_location, y_location, button_width, button_height, not_hover_c
     mouse = pygame.mouse.get_pos()
     mouse_clicked = pygame.mouse.get_pressed()
 
+    # checking if they clicked the right button, then run the other loop
     if x_location + button_width > mouse[0] > x_location and y_location + button_height > mouse[1] > y_location:
         pygame.draw.rect(gameDisplay, hovered_colour, (x_location, y_location, button_width, button_height), 0, 10)
         if mouse_clicked[0] == 1 and to_home != None and button_info == "Start":
@@ -110,7 +111,7 @@ def make_button(x_location, y_location, button_width, button_height, not_hover_c
 
 def game_intro():
     intro = True
-    # intiating the game intro loop
+    # initiating the game intro loop
     while intro:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -150,7 +151,11 @@ def home_screen():
         # frames the game is running at
         clock.tick(60)
 
+
 def game_loop():
+    milliseconds = 0
+    seconds = 0
+
     x = (display_width * 0.45)
     y = (display_height * 0.8)
 
@@ -167,7 +172,7 @@ def game_loop():
     height = 100
 
     #intializing score
-    avoided = 0
+    collected = 0
 
     turtle_width = 70
 
@@ -192,54 +197,60 @@ def game_loop():
                     x_change = 0
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     y_change = 0
-        # increasing and decreasing thing's y and x to mimic movement
+        # increasing and decreasing character's y and x to mimic movement
         x += x_change
         y += y_change
+        # setting background
         background(underwater)
-        # draw the obstacle with the inputted parameters
-        # things(thing_start_x, thing_start_y, thing_width, thing_height, black)
+        # initializing garbage img
         garbage_img(starting_x, starting_y)
-        # scaled_img = pygame.transform.scale(garbage, (100, 100))
-        # draw_image(50, 50, scaled_img)
+        # initializing character img
         turtle(x, y)
         # obstacle moves down 6 pixels every frame
         starting_y += speed
-        # draw_image(x, y, carImg)
-        display_score(avoided)
+        # uses collected counter and display current collected garbage amount
+        display_score(collected)
 
         if starting_y > display_height:
             starting_y = 0 - height
             starting_x = random.randrange(0, display_width)
         # checks if the obstacle passed over character
         if y < starting_y + height:
-            # checks if the the x point of the obstacle crosses the character
+            # checks if the x point of the obstacle crosses the character
             if x > starting_x and x < starting_x + width or x + turtle_width > starting_x and x + turtle_width < starting_x + width:
-                game_over()
+                # when garbage is collected move the charcter back up back to top
+                starting_y = 0 - height
+                starting_x = random.randrange(0, display_width)
+                speed += 0.3 # increases speed of the garbage everytime you collect one
+                collected += 1 # when garbage touches you, add 1 to collected counter
 
-        if starting_y > display_height:
-            starting_y = 0 - height
-            starting_x = random.randrange(0, display_width)
-            avoided += 1
-            speed += 1
-            width += (avoided * 1.2)
-
-        # keeps character inside of the screen
+        # keeps character inside the screen
         if x > display_width - turtle_width:
             x = display_width - turtle_width
-            # game_over()
         if x < 0:
             x = 0
-            # game_over()
         if y < 0:
             y = 0
-            # game_over()
         if y > display_height - turtle_width:
             y = display_height - turtle_width
-            # game_over()
+
+        # 1000 milliseconds in 1 second
+        if milliseconds > 1000:
+            seconds += 1
+            # reset the milliseconds back to 0 to count the next second
+            milliseconds -= 1000
+        # if 20 seconds has passed stop the collection minigame
+        if seconds == 20:
+            game_over()
+
         # updates the screen after each event
         pygame.display.update()
         # frames the game is running at
-        clock.tick(60)
+        print(f"{seconds} seconds")
+
+        # counts number of milliseconds passed in a 60pfs game
+        milliseconds += clock.tick_busy_loop(60)
+
 
 game_intro()
 home_screen()
