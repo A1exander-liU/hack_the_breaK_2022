@@ -61,17 +61,17 @@ def game_over_message(text):
     TextSurf, TextRect = text_objects(text, large_text)
     TextRect.center = ((display_width / 2), (display_height / 2))
     gameDisplay.blit(TextSurf, TextRect)
+    make_button(350, 400, 100, 50, seaweed_green, neon_green, "Return")
     pygame.display.update()
-    time.sleep(2)
-    home_screen()
+
 
 
 def things(thingx, thingy, thingw, thingh, color):
     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
 
 
-def game_over():
-    game_over_message("Game Over!")
+def game_finished():
+    end_screen()
 
 
 def display_score(score):
@@ -101,12 +101,27 @@ def make_button(x_location, y_location, button_width, button_height, not_hover_c
             game_intro()
         if mouse_clicked[0] == 1 and game_loop != None and button_info == "Garbage Collector":
             game_loop()
+        if mouse_clicked[0] == 1 and to_home != None and button_info == "Return":
+            home_screen()
+        if mouse_clicked[0] == 1 and game_loop != None and button_info == "Again":
+            time.sleep(0.5)
+            game_loop()
+        if mouse_clicked[0] == 1 and quiz_game != None and button_info == "Ocean Quiz":
+            quiz_game()
     else:
         pygame.draw.rect(gameDisplay, not_hover_colour, (x_location, y_location, button_width, button_height),0 ,10)
+    # draw text on the button
     button_text = pygame.font.Font("freesansbold.ttf", 15)
     textSurf, textRect = text_objects(button_info, button_text)
     textRect.center = ((x_location + (button_width / 2)), (y_location + (button_height / 2)))
     gameDisplay.blit(textSurf, textRect)
+
+
+def display_timer(time_left):
+    font = pygame.font.Font('freesansbold.ttf', 20)
+    text = font.render("Time left: " + str(time_left), True, black)
+    gameDisplay.blit(text, (670, 0))
+    pygame.display.update()
 
 
 def game_intro():
@@ -118,7 +133,7 @@ def game_intro():
                 pygame.quit()
                 quit()
         # creating title screen
-        gameDisplay.fill(white)
+        background(sea_floor)
         large_text = pygame.font.Font('freesansbold.ttf', 60)
         TextSurf, TextRect = text_objects("Ocean Helper", large_text)
         TextRect.center = ((display_width / 2), (display_height / 5))
@@ -140,7 +155,7 @@ def home_screen():
                 pygame.quit()
         background(sea_floor)
 
-        draw_image(300, 100, sea_turtle)
+        draw_image(300, 0, sea_turtle)
 
         make_button(100, 450, 150, 50, seaweed_green, neon_green, "Garbage Collector")
         make_button(550, 450, 150, 50, seaweed_green, neon_green, "Ocean Quiz")
@@ -154,7 +169,7 @@ def home_screen():
 
 def game_loop():
     milliseconds = 0
-    seconds = 0
+    seconds = 20
 
     x = (display_width * 0.45)
     y = (display_height * 0.8)
@@ -218,7 +233,7 @@ def game_loop():
         if y < starting_y + height:
             # checks if the x point of the obstacle crosses the character
             if x > starting_x and x < starting_x + width or x + turtle_width > starting_x and x + turtle_width < starting_x + width:
-                # when garbage is collected move the charcter back up back to top
+                # when garbage is collected move the character back up back to top
                 starting_y = 0 - height
                 starting_x = random.randrange(0, display_width)
                 speed += 0.3 # increases speed of the garbage everytime you collect one
@@ -236,20 +251,55 @@ def game_loop():
 
         # 1000 milliseconds in 1 second
         if milliseconds > 1000:
-            seconds += 1
+            seconds -= 1
             # reset the milliseconds back to 0 to count the next second
             milliseconds -= 1000
         # if 20 seconds has passed stop the collection minigame
-        if seconds == 20:
-            game_over()
+        # display game timer
+        display_timer(seconds)
+        if seconds == 0:
+            game_finished()
 
         # updates the screen after each event
         pygame.display.update()
         # frames the game is running at
-        print(f"{seconds} seconds")
 
         # counts number of milliseconds passed in a 60pfs game
         milliseconds += clock.tick_busy_loop(60)
+
+
+def quiz_game():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        background(underwater)
+
+        pygame.display.update()
+        clock.tick(60)
+
+
+
+def end_screen():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        # draw background
+        background(sea_floor)
+
+        make_button(200, 300, 100, 50, seaweed_green, neon_green, "Return")
+        make_button(500, 300, 100, 50, seaweed_green, neon_green, "Again")
+
+        # update screen
+        pygame.display.update()
+        # frames game is running at
+        clock.tick(60)
+
 
 
 game_intro()
